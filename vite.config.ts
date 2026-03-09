@@ -1,0 +1,36 @@
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import { VitePWA } from 'vite-plugin-pwa'
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [
+    react(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      includeAssets: ['app_icon.png'],
+      manifest: {
+        name: 'MoneyFlow - Tracker',
+        short_name: 'MoneyFlow',
+        description: 'Track your personal money flow, expenses, and lent money.',
+        theme_color: '#05291b',
+        background_color: '#03150e',
+        display: 'standalone',
+        orientation: 'portrait',
+        icons: [
+          {
+            src: 'app_icon.png',
+            sizes: '192x192',
+            type: 'image/png'
+          },
+          {
+            src: 'app_icon.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any maskable'
+          }
+        ]
+      }
+    })
+  ],
+})
