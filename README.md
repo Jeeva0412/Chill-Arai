@@ -1,73 +1,62 @@
-# React + TypeScript + Vite
+# Chill-arai - Money Management App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Chill-arai is a sleek, minimalistic, and intuitive money management web application designed to help you keep track of your personal finances, including daily expenses, incomes, and managing money you've lent out or borrowed from others.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Dashboard Overview**: Get a high-level view of your total revenue, expenses, money lent out, and money borrowed. Visual breakdowns using dynamic pie charts.
+- **Transaction Manager**: Easily record and track your income and expenses. Includes search functionality and date-range filters to find specific transactions quickly.
+- **Lending & Borrowing Logs**: Never forget who owes you money or who you owe money to. Manage lending and borrowing records grouped beautifully by person name, track the remaining balances, and mark records as settled/repaid.
+- **Minimalistic UI with Dark Mode**: Enjoy a clean, distraction-free interface that supports both Light Mode and a deep, high-contrast Dark Mode. The theme preference is automatically persisted.
+- **Offline Capable (Local Storage)**: Fully functional without a backend. Data is saved securely in your browser's local storage by default.
+- **Supabase Integration**: Can be easily connected to Supabase for cloud synchronization and persistent database storage.
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Frontend Framework**: [React 18](https://react.dev/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Build Tool**: [Vite](https://vitejs.dev/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **Charts**: [Recharts](https://recharts.org/)
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Prerequisites
+Make sure you have [Node.js](https://nodejs.org/) installed on your machine.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Installation
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+1. Clone the repository (or extract the project folder):
+   ```bash
+   cd Money_Management
+   ```
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+4. Open your browser and navigate to `http://localhost:5173`.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### (Optional) Supabase Setup
+
+To enable cloud storage using Supabase:
+
+1. Create a Supabase project and set up the following tables: `transactions`, `lendings`, and `borrowings`.
+2. Rename the `.env.example` file to `.env` (or create a new `.env` file in the root directory).
+3. Add your Supabase URL and Anon Key to the `.env` file:
+   ```env
+   VITE_SUPABASE_URL=your_supabase_project_url
+   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
+4. The application will automatically detect these keys and switch from local storage to using your Supabase database.
+
+## Design Philosophy
+
+The application follows a highly monochromatic, stark, and modern minimal aesthetic. It steps away from heavy colors, drop shadows, and glassmorphism in favor of distinct typography, sharp contrasts, and pure functional clarity. 
