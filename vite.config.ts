@@ -16,8 +16,8 @@ export default defineConfig({
         name: 'Chill-Arai',
         short_name: 'Chill-Arai',
         description: 'Track your personal money flow, expenses, and lent money.',
-        theme_color: '#05291b',
-        background_color: '#03150e',
+        theme_color: '#ffffff',
+        background_color: '#020617',
         display: 'standalone',
         orientation: 'portrait',
         icons: [
