@@ -6,9 +6,10 @@ interface DashboardProps {
     transactions: Transaction[];
     lendings: Lending[];
     borrowings: Borrowing[];
+    onNavigate: (tab: 'dashboard' | 'transactions' | 'lending' | 'borrowing') => void;
 }
 
-export function Dashboard({ transactions, lendings, borrowings }: DashboardProps) {
+export function Dashboard({ transactions, lendings, borrowings, onNavigate }: DashboardProps) {
     const totalIncome = transactions
         .filter((t) => t.type === 'income')
         .reduce((sum, t) => sum + t.amount, 0);
@@ -63,7 +64,7 @@ export function Dashboard({ transactions, lendings, borrowings }: DashboardProps
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem' }}>
 
                 {/* Revenue/Income Card */}
-                <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-6 flex-col gap-2 relative overflow-hidden transition-colors duration-300">
+                <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex-col gap-2 relative overflow-hidden transition-colors duration-300">
                     <div className="flex justify-between items-center text-slate-500 dark:text-slate-400 text-sm font-semibold mb-2 uppercase tracking-wide transition-colors">
                         <span>Revenue</span>
                         <div className="bg-white/60 p-1.5 rounded-full"><TrendingDown className="text-[#d97706]" size={16} /></div>
@@ -72,7 +73,11 @@ export function Dashboard({ transactions, lendings, borrowings }: DashboardProps
                 </div>
 
                 {/* Expense Card */}
-                <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-6 flex-col gap-2 relative overflow-hidden transition-colors duration-300">
+                <div
+                    onClick={() => onNavigate('transactions')}
+                    className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex-col gap-2 relative overflow-hidden transition-all duration-300 cursor-pointer hover:-translate-y-1 hover:shadow-lg"
+                    title="View Transactions"
+                >
                     <div className="flex justify-between items-center text-slate-500 dark:text-slate-400 text-sm font-semibold mb-2 uppercase tracking-wide transition-colors">
                         <span>Expenses</span>
                         <div className="bg-white/60 p-1.5 rounded-full"><TrendingUp className="text-[#e11d48]" size={16} /></div>
@@ -81,7 +86,11 @@ export function Dashboard({ transactions, lendings, borrowings }: DashboardProps
                 </div>
 
                 {/* Lent Card */}
-                <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-6 flex-col gap-2 relative overflow-hidden transition-colors duration-300">
+                <div
+                    onClick={() => onNavigate('lending')}
+                    className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex-col gap-2 relative overflow-hidden transition-all duration-300 cursor-pointer hover:-translate-y-1 hover:shadow-lg"
+                    title="View Lending Logs"
+                >
                     <div className="flex justify-between items-center text-slate-500 dark:text-slate-400 text-sm font-semibold mb-2 uppercase tracking-wide transition-colors">
                         <span>Total Lent Out</span>
                         <div className="bg-white/60 p-1.5 rounded-full"><Users className="text-[#059669]" size={16} /></div>
@@ -90,7 +99,11 @@ export function Dashboard({ transactions, lendings, borrowings }: DashboardProps
                 </div>
 
                 {/* Borrowed Card */}
-                <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-6 flex-col gap-2 relative overflow-hidden transition-colors duration-300">
+                <div
+                    onClick={() => onNavigate('borrowing')}
+                    className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex-col gap-2 relative overflow-hidden transition-all duration-300 cursor-pointer hover:-translate-y-1 hover:shadow-lg"
+                    title="View Borrowing Logs"
+                >
                     <div className="flex justify-between items-center text-slate-500 dark:text-slate-400 text-sm font-semibold mb-2 uppercase tracking-wide transition-colors">
                         <span>Total Borrowed</span>
                         <div className="bg-white/60 p-1.5 rounded-full"><Download className="text-[#0284c7]" size={16} /></div>
@@ -104,7 +117,7 @@ export function Dashboard({ transactions, lendings, borrowings }: DashboardProps
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
 
                 {/* Expense Chart */}
-                <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-6 flex-col gap-4 transition-colors duration-300">
+                <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex-col gap-4 transition-colors duration-300">
                     <h3 className="text-lg font-bold text-black dark:text-white border-b border-slate-100 dark:border-slate-800 pb-2 mb-2 transition-colors">Expense Breakdown</h3>
                     {expenseData.length > 0 ? (
                         <div className="h-[300px] w-full">
@@ -142,7 +155,7 @@ export function Dashboard({ transactions, lendings, borrowings }: DashboardProps
                 </div>
 
                 {/* Income Chart */}
-                <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-6 flex-col gap-4 transition-colors duration-300">
+                <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex-col gap-4 transition-colors duration-300">
                     <h3 className="text-lg font-bold text-black dark:text-white border-b border-slate-100 dark:border-slate-800 pb-2 mb-2 transition-colors">Income Sources</h3>
                     {incomeData.length > 0 ? (
                         <div className="h-[300px] w-full">

@@ -35,47 +35,78 @@ export function LendingTracker({ lendings, onUpdateStatus, onDelete }: LendingTr
         }
     };
 
+    const [showSettled, setShowSettled] = useState(false);
+
+    // Filter grouped lendings based on showSettled state
+    const displayGroups = Object.entries(groupedLendings).filter(([, personLendings]) => {
+        const allSettled = personLendings.every(l => l.status === 'settled');
+        return showSettled || !allSettled;
+    });
+
+    const overallTotalLent = lendings
+        .filter(l => l.status !== 'settled')
+        .reduce((sum, l) => sum + (l.amount - l.amount_paid), 0);
+
     return (
-        <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-6 flex-col gap-4 w-full transition-colors duration-300">
+        <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex-col gap-4 w-full transition-colors duration-300">
+            {overallTotalLent > 0 && (
+                <div className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 text-center sm:text-left mb-2 transition-colors duration-300">
+                    <p className="text-slate-600 dark:text-slate-400 text-lg md:text-xl font-medium">
+                        You have overall totally lent out <span className="font-extrabold text-black dark:text-white text-2xl md:text-3xl tracking-tight">₹{overallTotalLent.toLocaleString()}</span> in total.
+                    </p>
+                </div>
+            )}
+
+            {lendings.some(l => l.status === 'settled') && (
+                <div className="flex justify-end mb-2">
+                    <button
+                        onClick={() => setShowSettled(!showSettled)}
+                        className="text-sm text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition-colors underline"
+                    >
+                        {showSettled ? 'Hide Settled Accounts' : 'Show Settled Accounts'}
+                    </button>
+                </div>
+            )}
+
             <div className="flex flex-col gap-4 mt-2 w-full">
-                {Object.keys(groupedLendings).length === 0 ? (
+                {displayGroups.length === 0 ? (
                     <div className="w-full text-center p-8 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 transition-colors">
-                        You haven't lent money to anyone yet.
+                        {lendings.length === 0 ? "You haven't lent money to anyone yet." : "No active lending accounts."}
                     </div>
                 ) : (
-                    Object.entries(groupedLendings).map(([personName, personLendings]) => {
+                    displayGroups.map(([personName, personLendings]) => {
                         const totalRemaining = personLendings.reduce((sum, l) => sum + (l.amount - l.amount_paid), 0);
                         const allSettled = personLendings.every(l => l.status === 'settled');
                         const isExpanded = expandedPerson === personName;
 
                         return (
-                            <div key={personName} className={`bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 flex flex-col gap-0 relative overflow-hidden transition-all duration-300 ${allSettled ? 'opacity-50' : ''}`}>
+                            <div key={personName} className={`bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl flex flex-col gap-0 relative overflow-hidden transition-all duration-300 ${allSettled ? 'opacity-50' : ''}`}>
 
                                 {/* Header / Summary Card */}
                                 <div
-                                    className="p-5 flex justify-between items-center cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors"
+                                    className="p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors"
                                     onClick={() => toggleExpand(personName)}
                                 >
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-bold text-xl transition-colors">
+                                    <div className="flex items-center gap-4 w-full sm:w-auto">
+                                        <div className="w-12 h-12 rounded-full bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-bold text-xl shrink-0 transition-colors">
                                             {personName.charAt(0).toUpperCase()}
                                         </div>
-                                        <div>
-                                            <div className="font-bold text-xl text-black dark:text-white transition-colors">{personName}</div>
-                                            <div className="text-sm text-slate-500 dark:text-slate-400 mt-0.5 transition-colors">
+                                        <div className="min-w-0 flex-1">
+                                            <div className="font-bold text-xl text-black dark:text-white truncate transition-colors">{personName}</div>
+                                            <div className="text-sm text-slate-500 dark:text-slate-400 mt-0.5 truncate transition-colors">
                                                 {personLendings.length} Record{personLendings.length !== 1 ? 's' : ''} {allSettled ? '(All Settled)' : ''}
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center gap-6">
-                                        <div className="text-right">
+                                    <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-4 sm:gap-6 mt-1 sm:mt-0 pt-3 sm:pt-0 border-t sm:border-0 border-slate-100 dark:border-slate-800">
+                                        <div className="text-left sm:text-right">
                                             <div className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1 transition-colors">Total Remaining</div>
                                             <div className={`text-2xl font-bold transition-colors ${allSettled ? 'text-slate-400 dark:text-slate-500' : 'text-black dark:text-white'}`}>
                                                 ₹{totalRemaining.toLocaleString()}
                                             </div>
                                         </div>
-                                        <div className="text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 p-2 hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black transition-colors">
+                                        <div className="text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 rounded-full p-2 hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black transition-colors shrink-0">
                                             {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                                         </div>
                                     </div>
@@ -110,7 +141,7 @@ export function LendingTracker({ lendings, onUpdateStatus, onDelete }: LendingTr
 
                                                     {l.status !== 'settled' && (
                                                         <button
-                                                            className="shrink-0 w-32 py-2 px-3 border border-black dark:border-white hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black transition-colors text-black dark:text-white text-sm font-bold flex items-center justify-center gap-1.5"
+                                                            className="shrink-0 w-32 py-2 px-3 border border-black dark:border-white hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black rounded-xl transition-colors text-black dark:text-white text-sm font-bold flex items-center justify-center gap-1.5"
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
                                                                 onUpdateStatus(l.id, l.status);
@@ -121,7 +152,7 @@ export function LendingTracker({ lendings, onUpdateStatus, onDelete }: LendingTr
                                                     )}
 
                                                     <button
-                                                        className="shrink-0 py-2 px-3 border border-slate-200 dark:border-slate-800 hover:border-black dark:hover:border-white hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black transition-colors text-slate-600 dark:text-slate-400 flex items-center justify-center font-bold"
+                                                        className="shrink-0 py-2 px-3 border border-slate-200 dark:border-slate-800 hover:border-black dark:hover:border-white hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black rounded-xl transition-colors text-slate-600 dark:text-slate-400 flex items-center justify-center font-bold"
                                                         onClick={(e) => {
                                                             e.stopPropagation();
                                                             onDelete(l.id);
