@@ -7,11 +7,20 @@ import { TransactionForm, LendingForm, BorrowForm } from './components/Forms';
 import type { Transaction, Lending, Borrowing } from './types/database.types';
 import { supabase } from './lib/supabase';
 import { Wallet, Activity, Download, Users, Plus, Moon, Sun } from 'lucide-react';
+import { useOnlineStatus } from './hooks/useOnlineStatus';
+
+type Mutation = {
+  id: string;
+  type: 'INSERT' | 'UPDATE' | 'DELETE';
+  table: 'transactions' | 'lendings' | 'borrowings';
+  payload: any;
+  targetId?: string;
+};
 
 function App() {
+  const isOnline = useOnlineStatus();
   const [activeTab, setActiveTab] = useState<'dashboard' | 'transactions' | 'lending' | 'borrowing'>('dashboard');
   const [isDarkMode, setIsDarkMode] = useState(() => {
-    // Check local storage or system preference
     if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
       return true;
     }
@@ -19,19 +28,114 @@ function App() {
   });
 
   // State
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [lendings, setLendings] = useState<Lending[]>([]);
-  const [borrowings, setBorrowings] = useState<Borrowing[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>(() => {
+    const local = localStorage.getItem('moneyflow_tx');
+    return local ? JSON.parse(local) : [];
+  });
+  const [lendings, setLendings] = useState<Lending[]>(() => {
+    const local = localStorage.getItem('moneyflow_lendings');
+    return local ? JSON.parse(local) : [];
+  });
+  const [borrowings, setBorrowings] = useState<Borrowing[]>(() => {
+    const local = localStorage.getItem('moneyflow_borrowings');
+    return local ? JSON.parse(local) : [];
+  });
+
+  const [offlineQueue, setOfflineQueue] = useState<Mutation[]>(() => {
+    const local = localStorage.getItem('chill_arai_offline_queue');
+    return local ? JSON.parse(local) : [];
+  });
 
   // Modals
   const [showTxForm, setShowTxForm] = useState(false);
   const [showLendingForm, setShowLendingForm] = useState(false);
   const [showBorrowForm, setShowBorrowForm] = useState(false);
 
-  // Load initial data
+  // Sync state to local storage whenever it changes
   useEffect(() => {
-    fetchData();
-  }, []);
+    localStorage.setItem('moneyflow_tx', JSON.stringify(transactions));
+  }, [transactions]);
+
+  useEffect(() => {
+    localStorage.setItem('moneyflow_lendings', JSON.stringify(lendings));
+  }, [lendings]);
+
+  useEffect(() => {
+    localStorage.setItem('moneyflow_borrowings', JSON.stringify(borrowings));
+  }, [borrowings]);
+
+  useEffect(() => {
+    localStorage.setItem('chill_arai_offline_queue', JSON.stringify(offlineQueue));
+  }, [offlineQueue]);
+
+  // Load fresh data from Supabase if online
+  useEffect(() => {
+    if (isOnline && import.meta.env.VITE_SUPABASE_URL) {
+      fetchData();
+      syncQueue();
+    }
+  }, [isOnline]);
+
+  const fetchData = async () => {
+    try {
+      const { data: txData } = await supabase.from('transactions').select('*');
+      const { data: lData } = await supabase.from('lendings').select('*');
+      const { data: bData } = await supabase.from('borrowings').select('*');
+
+      if (txData) setTransactions(txData);
+      if (lData) setLendings(lData);
+      if (bData) setBorrowings(bData);
+    } catch (error) {
+      console.error('Error fetching fresh data:', error);
+    }
+  };
+
+  const syncQueue = async () => {
+    if (offlineQueue.length === 0) return;
+
+    const queue = [...offlineQueue];
+    const failedOnes: Mutation[] = [];
+
+    for (const mutation of queue) {
+      try {
+        if (mutation.type === 'INSERT') {
+          await supabase.from(mutation.table).insert([mutation.payload]);
+        } else if (mutation.type === 'UPDATE') {
+          await supabase.from(mutation.table).update(mutation.payload).eq('id', mutation.targetId);
+        } else if (mutation.type === 'DELETE') {
+          await supabase.from(mutation.table).delete().eq('id', mutation.targetId);
+        }
+      } catch (error) {
+        console.error('Failed to sync mutation:', mutation, error);
+        failedOnes.push(mutation);
+      }
+    }
+
+    setOfflineQueue(failedOnes);
+  };
+
+  const executeMutation = async (mutation: Mutation) => {
+    // 1. Optimistic Update Local Storage is handled by other state effects
+    if (isOnline && import.meta.env.VITE_SUPABASE_URL) {
+      try {
+        if (mutation.type === 'INSERT') {
+          await supabase.from(mutation.table).insert([mutation.payload]);
+        } else if (mutation.type === 'UPDATE') {
+          await supabase.from(mutation.table).update(mutation.payload).eq('id', mutation.targetId);
+        } else if (mutation.type === 'DELETE') {
+          await supabase.from(mutation.table).delete().eq('id', mutation.targetId);
+        }
+        return true;
+      } catch (error) {
+        console.error('Mutation failed, adding to queue:', mutation, error);
+        setOfflineQueue(prev => [...prev, mutation]);
+        return false;
+      }
+    } else {
+      setOfflineQueue(prev => [...prev, mutation]);
+      return true;
+    }
+  };
 
   // Sync dark mode
   useEffect(() => {
@@ -46,40 +150,6 @@ function App() {
 
   const toggleTheme = () => setIsDarkMode(!isDarkMode);
 
-  const fetchData = async () => {
-    try {
-      // First try to load from Supabase if configured
-      if (import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY) {
-        const { data: txData } = await supabase.from('transactions').select('*');
-        const { data: lData } = await supabase.from('lendings').select('*');
-        const { data: bData } = await supabase.from('borrowings').select('*');
-        if (txData) setTransactions(txData);
-        if (lData) setLendings(lData);
-        if (bData) setBorrowings(bData);
-      } else {
-        // Fallback to localStorage for immediate usage without DB setup
-        const localTx = localStorage.getItem('moneyflow_tx');
-        const localLend = localStorage.getItem('moneyflow_lendings');
-        const localBorrow = localStorage.getItem('moneyflow_borrowings');
-
-        if (localTx) setTransactions(JSON.parse(localTx));
-        if (localLend) setLendings(JSON.parse(localLend));
-        if (localBorrow) setBorrowings(JSON.parse(localBorrow));
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
-
-  // Save to fallbacks when state changes if no Supabase
-  useEffect(() => {
-    if (!import.meta.env.VITE_SUPABASE_URL) {
-      localStorage.setItem('moneyflow_tx', JSON.stringify(transactions));
-      localStorage.setItem('moneyflow_lendings', JSON.stringify(lendings));
-      localStorage.setItem('moneyflow_borrowings', JSON.stringify(borrowings));
-    }
-  }, [transactions, lendings, borrowings]);
-
   const handleAddTransaction = async (data: any) => {
     const { date, ...restData } = data;
     const dateToUse = date ? new Date(date).toISOString() : new Date().toISOString();
@@ -89,12 +159,15 @@ function App() {
       ...restData
     };
 
-    if (import.meta.env.VITE_SUPABASE_URL) {
-      await supabase.from('transactions').insert([newTx]);
-    }
-
     setTransactions((prev) => [...prev, newTx]);
     setShowTxForm(false);
+
+    executeMutation({
+      id: crypto.randomUUID(),
+      type: 'INSERT',
+      table: 'transactions',
+      payload: newTx
+    });
   };
 
   const handleAddLending = async (data: any) => {
@@ -118,14 +191,22 @@ function App() {
       description: `Lent to ${data.person_name}`
     };
 
-    if (import.meta.env.VITE_SUPABASE_URL) {
-      await supabase.from('lendings').insert([newLending]);
-      await supabase.from('transactions').insert([newTx]);
-    }
-
     setLendings((prev) => [...prev, newLending]);
     setTransactions((prev) => [...prev, newTx]);
     setShowLendingForm(false);
+
+    executeMutation({
+      id: crypto.randomUUID(),
+      type: 'INSERT',
+      table: 'lendings',
+      payload: newLending
+    });
+    executeMutation({
+      id: crypto.randomUUID(),
+      type: 'INSERT',
+      table: 'transactions',
+      payload: newTx
+    });
   };
 
   const handleAddLendingPayment = async (id: string, paymentAmount: number) => {
@@ -134,35 +215,35 @@ function App() {
 
     const newAmountPaid = recordToUpdate.amount_paid + paymentAmount;
     const newStatus = newAmountPaid >= recordToUpdate.amount ? 'settled' : 'partially_paid';
+    const currentTime = new Date().toISOString();
 
-    if (import.meta.env.VITE_SUPABASE_URL) {
-      await supabase.from('lendings').update({ amount_paid: newAmountPaid, status: newStatus }).eq('id', id);
-
-      const newTx: Transaction = {
-        id: crypto.randomUUID(),
-        created_at: new Date().toISOString(),
-        amount: paymentAmount,
-        type: 'income',
-        category: 'Lending Repayment',
-        description: `Repayment from ${recordToUpdate.person_name}`
-      };
-      await supabase.from('transactions').insert([newTx]);
-      setTransactions((prev) => [...prev, newTx]);
-    } else {
-      const newTx: Transaction = {
-        id: crypto.randomUUID(),
-        created_at: new Date().toISOString(),
-        amount: paymentAmount,
-        type: 'income',
-        category: 'Lending Repayment',
-        description: `Repayment from ${recordToUpdate.person_name}`
-      };
-      setTransactions((prev) => [...prev, newTx]);
-    }
+    const newTx: Transaction = {
+      id: crypto.randomUUID(),
+      created_at: currentTime,
+      amount: paymentAmount,
+      type: 'income',
+      category: 'Lending Repayment',
+      description: `Repayment from ${recordToUpdate.person_name}`
+    };
 
     setLendings((prev) =>
       prev.map((l) => (l.id === id ? { ...l, amount_paid: newAmountPaid, status: newStatus as any } : l))
     );
+    setTransactions((prev) => [...prev, newTx]);
+
+    executeMutation({
+      id: crypto.randomUUID(),
+      type: 'UPDATE',
+      table: 'lendings',
+      targetId: id,
+      payload: { amount_paid: newAmountPaid, status: newStatus }
+    });
+    executeMutation({
+      id: crypto.randomUUID(),
+      type: 'INSERT',
+      table: 'transactions',
+      payload: newTx
+    });
   };
 
   const handleAddBorrowing = async (data: any) => {
@@ -186,14 +267,22 @@ function App() {
       description: `Borrowed from ${data.person_name}`
     };
 
-    if (import.meta.env.VITE_SUPABASE_URL) {
-      await supabase.from('borrowings').insert([newBorrowing]);
-      await supabase.from('transactions').insert([newTx]);
-    }
-
     setBorrowings((prev) => [...prev, newBorrowing]);
     setTransactions((prev) => [...prev, newTx]);
     setShowBorrowForm(false);
+
+    executeMutation({
+      id: crypto.randomUUID(),
+      type: 'INSERT',
+      table: 'borrowings',
+      payload: newBorrowing
+    });
+    executeMutation({
+      id: crypto.randomUUID(),
+      type: 'INSERT',
+      table: 'transactions',
+      payload: newTx
+    });
   };
 
   const handleAddBorrowingPayment = async (id: string, paymentAmount: number) => {
@@ -202,78 +291,100 @@ function App() {
 
     const newAmountPaid = recordToUpdate.amount_paid + paymentAmount;
     const newStatus = newAmountPaid >= recordToUpdate.amount ? 'settled' : 'partially_paid';
+    const currentTime = new Date().toISOString();
 
-    if (import.meta.env.VITE_SUPABASE_URL) {
-      await supabase.from('borrowings').update({ amount_paid: newAmountPaid, status: newStatus }).eq('id', id);
-
-      const newTx: Transaction = {
-        id: crypto.randomUUID(),
-        created_at: new Date().toISOString(),
-        amount: paymentAmount,
-        type: 'expense',
-        category: 'Borrowing Repayment',
-        description: `Repaid ${recordToUpdate.person_name}`
-      };
-      await supabase.from('transactions').insert([newTx]);
-      setTransactions((prev) => [...prev, newTx]);
-    } else {
-      const newTx: Transaction = {
-        id: crypto.randomUUID(),
-        created_at: new Date().toISOString(),
-        amount: paymentAmount,
-        type: 'expense',
-        category: 'Borrowing Repayment',
-        description: `Repaid ${recordToUpdate.person_name}`
-      };
-      setTransactions((prev) => [...prev, newTx]);
-    }
+    const newTx: Transaction = {
+      id: crypto.randomUUID(),
+      created_at: currentTime,
+      amount: paymentAmount,
+      type: 'expense',
+      category: 'Borrowing Repayment',
+      description: `Repaid ${recordToUpdate.person_name}`
+    };
 
     setBorrowings((prev) =>
       prev.map((b) => (b.id === id ? { ...b, amount_paid: newAmountPaid, status: newStatus as any } : b))
     );
+    setTransactions((prev) => [...prev, newTx]);
+
+    executeMutation({
+      id: crypto.randomUUID(),
+      type: 'UPDATE',
+      table: 'borrowings',
+      targetId: id,
+      payload: { amount_paid: newAmountPaid, status: newStatus }
+    });
+    executeMutation({
+      id: crypto.randomUUID(),
+      type: 'INSERT',
+      table: 'transactions',
+      payload: newTx
+    });
   };
 
   const handleDeleteBorrowing = async (id: string) => {
     const borrowing = borrowings.find(b => b.id === id);
-    if (import.meta.env.VITE_SUPABASE_URL) {
-      await supabase.from('borrowings').delete().eq('id', id);
-    }
     setBorrowings((prev) => prev.filter((b) => b.id !== id));
+
+    executeMutation({
+      id: crypto.randomUUID(),
+      type: 'DELETE',
+      table: 'borrowings',
+      targetId: id,
+      payload: null
+    });
 
     if (borrowing) {
       const matchingTx = transactions.find(t => t.created_at === borrowing.created_at && t.amount === borrowing.amount && t.category === 'Borrowed Money');
       if (matchingTx) {
-        if (import.meta.env.VITE_SUPABASE_URL) {
-          await supabase.from('transactions').delete().eq('id', matchingTx.id);
-        }
         setTransactions((prev) => prev.filter((t) => t.id !== matchingTx.id));
+        executeMutation({
+          id: crypto.randomUUID(),
+          type: 'DELETE',
+          table: 'transactions',
+          targetId: matchingTx.id,
+          payload: null
+        });
       }
     }
   };
 
   const handleDeleteTransaction = async (id: string) => {
     const tx = transactions.find(t => t.id === id);
-    if (import.meta.env.VITE_SUPABASE_URL) {
-      await supabase.from('transactions').delete().eq('id', id);
-    }
     setTransactions((prev) => prev.filter((t) => t.id !== id));
+
+    executeMutation({
+      id: crypto.randomUUID(),
+      type: 'DELETE',
+      table: 'transactions',
+      targetId: id,
+      payload: null
+    });
 
     if (tx) {
       if (tx.category === 'Lent Money') {
         const matchingLending = lendings.find(l => l.created_at === tx.created_at && l.amount === tx.amount);
         if (matchingLending) {
-          if (import.meta.env.VITE_SUPABASE_URL) {
-            await supabase.from('lendings').delete().eq('id', matchingLending.id);
-          }
           setLendings((prev) => prev.filter((l) => l.id !== matchingLending.id));
+          executeMutation({
+            id: crypto.randomUUID(),
+            type: 'DELETE',
+            table: 'lendings',
+            targetId: matchingLending.id,
+            payload: null
+          });
         }
       } else if (tx.category === 'Borrowed Money') {
         const matchingBorrowing = borrowings.find(b => b.created_at === tx.created_at && b.amount === tx.amount);
         if (matchingBorrowing) {
-          if (import.meta.env.VITE_SUPABASE_URL) {
-            await supabase.from('borrowings').delete().eq('id', matchingBorrowing.id);
-          }
           setBorrowings((prev) => prev.filter((b) => b.id !== matchingBorrowing.id));
+          executeMutation({
+            id: crypto.randomUUID(),
+            type: 'DELETE',
+            table: 'borrowings',
+            targetId: matchingBorrowing.id,
+            payload: null
+          });
         }
       }
     }
@@ -281,18 +392,27 @@ function App() {
 
   const handleDeleteLending = async (id: string) => {
     const lending = lendings.find(l => l.id === id);
-    if (import.meta.env.VITE_SUPABASE_URL) {
-      await supabase.from('lendings').delete().eq('id', id);
-    }
     setLendings((prev) => prev.filter((l) => l.id !== id));
+
+    executeMutation({
+      id: crypto.randomUUID(),
+      type: 'DELETE',
+      table: 'lendings',
+      targetId: id,
+      payload: null
+    });
 
     if (lending) {
       const matchingTx = transactions.find(t => t.created_at === lending.created_at && t.amount === lending.amount && t.category === 'Lent Money');
       if (matchingTx) {
-        if (import.meta.env.VITE_SUPABASE_URL) {
-          await supabase.from('transactions').delete().eq('id', matchingTx.id);
-        }
         setTransactions((prev) => prev.filter((t) => t.id !== matchingTx.id));
+        executeMutation({
+          id: crypto.randomUUID(),
+          type: 'DELETE',
+          table: 'transactions',
+          targetId: matchingTx.id,
+          payload: null
+        });
       }
     }
   };
