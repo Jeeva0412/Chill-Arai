@@ -67,7 +67,7 @@ export function Dashboard({ transactions, lendings, borrowings, onNavigate }: Da
                 <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex-col gap-2 relative overflow-hidden transition-colors duration-300">
                     <div className="flex justify-between items-center text-slate-500 dark:text-slate-400 text-sm font-semibold mb-2 uppercase tracking-wide transition-colors">
                         <span>Revenue</span>
-                        <div className="bg-white/60 p-1.5 rounded-full"><TrendingDown className="text-[#d97706]" size={16} /></div>
+                        <div className="bg-slate-100 dark:bg-slate-900 p-1.5 rounded-full transition-colors"><TrendingDown className="text-black dark:text-white" size={16} /></div>
                     </div>
                     <div className="text-3xl font-extrabold text-black dark:text-white tracking-tight transition-colors">₹{totalIncome.toLocaleString()}</div>
                 </div>
@@ -80,7 +80,7 @@ export function Dashboard({ transactions, lendings, borrowings, onNavigate }: Da
                 >
                     <div className="flex justify-between items-center text-slate-500 dark:text-slate-400 text-sm font-semibold mb-2 uppercase tracking-wide transition-colors">
                         <span>Expenses</span>
-                        <div className="bg-white/60 p-1.5 rounded-full"><TrendingUp className="text-[#e11d48]" size={16} /></div>
+                        <div className="bg-slate-100 dark:bg-slate-900 p-1.5 rounded-full transition-colors"><TrendingUp className="text-black dark:text-white" size={16} /></div>
                     </div>
                     <div className="text-3xl font-extrabold text-black dark:text-white tracking-tight transition-colors">₹{totalExpense.toLocaleString()}</div>
                 </div>
@@ -93,7 +93,7 @@ export function Dashboard({ transactions, lendings, borrowings, onNavigate }: Da
                 >
                     <div className="flex justify-between items-center text-slate-500 dark:text-slate-400 text-sm font-semibold mb-2 uppercase tracking-wide transition-colors">
                         <span>Total Lent Out</span>
-                        <div className="bg-white/60 p-1.5 rounded-full"><Users className="text-[#059669]" size={16} /></div>
+                        <div className="bg-slate-100 dark:bg-slate-900 p-1.5 rounded-full transition-colors"><Users className="text-black dark:text-white" size={16} /></div>
                     </div>
                     <div className="text-3xl font-extrabold text-black dark:text-white tracking-tight transition-colors">₹{totalLent.toLocaleString()}</div>
                 </div>
@@ -106,7 +106,7 @@ export function Dashboard({ transactions, lendings, borrowings, onNavigate }: Da
                 >
                     <div className="flex justify-between items-center text-slate-500 dark:text-slate-400 text-sm font-semibold mb-2 uppercase tracking-wide transition-colors">
                         <span>Total Borrowed</span>
-                        <div className="bg-white/60 p-1.5 rounded-full"><Download className="text-[#0284c7]" size={16} /></div>
+                        <div className="bg-slate-100 dark:bg-slate-900 p-1.5 rounded-full transition-colors"><Download className="text-black dark:text-white" size={16} /></div>
                     </div>
                     <div className="text-3xl font-extrabold text-black dark:text-white tracking-tight transition-colors">₹{totalBorrowed.toLocaleString()}</div>
                 </div>

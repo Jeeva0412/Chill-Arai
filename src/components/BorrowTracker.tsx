@@ -4,12 +4,14 @@ import type { Borrowing } from '../types/database.types';
 
 interface BorrowTrackerProps {
     borrowings: Borrowing[];
-    onUpdateStatus: (id: string, currentStatus: string) => void;
+    onAddPayment: (id: string, amount: number) => void;
     onDelete: (id: string) => void;
 }
 
-export function BorrowTracker({ borrowings, onUpdateStatus, onDelete }: BorrowTrackerProps) {
+export function BorrowTracker({ borrowings, onAddPayment, onDelete }: BorrowTrackerProps) {
     const [expandedPerson, setExpandedPerson] = useState<string | null>(null);
+    const [selectedPaymentId, setSelectedPaymentId] = useState<string | null>(null);
+    const [paymentAmount, setPaymentAmount] = useState<string>('');
 
     // Group borrowings by person_name
     const groupedBorrowings = borrowings.reduce((acc, current) => {
@@ -132,23 +134,87 @@ export function BorrowTracker({ borrowings, onUpdateStatus, onDelete }: BorrowTr
                                                     </div>
                                                 </div>
 
-                                                <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
-                                                    <div className="text-right shrink-0">
-                                                        <div className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-0.5 transition-colors">Amount</div>
-                                                        <div className="font-bold text-lg text-black dark:text-white transition-colors">₹{b.amount.toLocaleString()}</div>
+                                                <div className="flex flex-col md:flex-row items-end md:items-center gap-4 w-full md:w-auto justify-between md:justify-end mt-4 md:mt-0">
+                                                    <div className="flex gap-4 w-full md:w-auto justify-between md:justify-end">
+                                                        <div className="text-right shrink-0">
+                                                            <div className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-0.5 transition-colors">Total Owed</div>
+                                                            <div className="font-bold text-lg text-black dark:text-white transition-colors">₹{b.amount.toLocaleString()}</div>
+                                                        </div>
+                                                        <div className="text-right shrink-0">
+                                                            <div className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-0.5 transition-colors">Repaid</div>
+                                                            <div className="font-bold text-lg text-emerald-600 dark:text-emerald-500 transition-colors">₹{b.amount_paid.toLocaleString()}</div>
+                                                        </div>
+                                                        <div className="text-right shrink-0">
+                                                            <div className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-0.5 transition-colors">Left</div>
+                                                            <div className="font-bold text-lg text-rose-600 dark:text-rose-500 transition-colors">₹{(b.amount - b.amount_paid).toLocaleString()}</div>
+                                                        </div>
                                                     </div>
 
-                                                    {b.status !== 'settled' && (
+                                                    <div className="flex items-center gap-2 mt-2 md:mt-0 w-full md:w-auto justify-end">
+                                                        {b.status !== 'settled' && selectedPaymentId !== b.id && (
+                                                            <button
+                                                                className="shrink-0 py-2 px-4 border border-black dark:border-white hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black rounded-xl transition-colors text-black dark:text-white text-sm font-bold flex items-center justify-center gap-1.5"
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    setSelectedPaymentId(b.id);
+                                                                    setPaymentAmount((b.amount - b.amount_paid).toString());
+                                                                }}
+                                                            >
+                                                                <CheckCircle2 size={16} /> Repay Amount
+                                                            </button>
+                                                        )}
+
+                                                        {selectedPaymentId === b.id && (
+                                                            <div className="flex items-center gap-2 animate-fade-in origin-right">
+                                                                <div className="relative">
+                                                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-medium font-sans">₹</span>
+                                                                    <input
+                                                                        type="number"
+                                                                        value={paymentAmount}
+                                                                        onChange={(e) => setPaymentAmount(e.target.value)}
+                                                                        className="w-24 pl-7 pr-2 py-1.5 text-sm bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent transition-all outline-none font-bold text-black dark:text-white"
+                                                                        autoFocus
+                                                                        onClick={(e) => e.stopPropagation()}
+                                                                        max={b.amount - b.amount_paid}
+                                                                        min={1}
+                                                                    />
+                                                                </div>
+                                                                <button
+                                                                    className="bg-black dark:bg-white text-white dark:text-black px-3 py-1.5 rounded-lg text-sm font-bold hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        const amount = parseFloat(paymentAmount);
+                                                                        if (!isNaN(amount) && amount > 0) {
+                                                                            onAddPayment(b.id, amount);
+                                                                            setSelectedPaymentId(null);
+                                                                        }
+                                                                    }}
+                                                                >
+                                                                    Confirm
+                                                                </button>
+                                                                <button
+                                                                    className="text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 px-2 py-1.5 text-sm font-bold transition-colors"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        setSelectedPaymentId(null);
+                                                                    }}
+                                                                >
+                                                                    Cancel
+                                                                </button>
+                                                            </div>
+                                                        )}
+
                                                         <button
-                                                            className="shrink-0 w-32 py-2 px-3 border border-black dark:border-white hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black rounded-xl transition-colors text-black dark:text-white text-sm font-bold flex items-center justify-center gap-1.5"
+                                                            className="shrink-0 py-2 px-3 border border-slate-200 dark:border-slate-800 hover:border-black dark:hover:border-white hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black rounded-xl transition-colors text-slate-600 dark:text-slate-400 flex items-center justify-center font-bold"
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
-                                                                onUpdateStatus(b.id, b.status);
+                                                                onDelete(b.id);
                                                             }}
+                                                            title="Delete Record"
                                                         >
-                                                            <CheckCircle2 size={16} /> Repay
+                                                            <Trash2 size={16} />
                                                         </button>
-                                                    )}
+                                                    </div>
 
                                                     <button
                                                         className="shrink-0 py-2 px-3 border border-slate-200 dark:border-slate-800 hover:border-black dark:hover:border-white hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black rounded-xl transition-colors text-slate-600 dark:text-slate-400 flex items-center justify-center font-bold"

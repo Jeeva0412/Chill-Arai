@@ -128,41 +128,40 @@ function App() {
     setShowLendingForm(false);
   };
 
-  const handleUpdateLendingStatus = async (id: string, currentStatus: string) => {
-    const newStatus = currentStatus === 'pending' ? 'settled' : 'pending';
+  const handleAddLendingPayment = async (id: string, paymentAmount: number) => {
     const recordToUpdate = lendings.find(l => l.id === id);
+    if (!recordToUpdate) return;
+
+    const newAmountPaid = recordToUpdate.amount_paid + paymentAmount;
+    const newStatus = newAmountPaid >= recordToUpdate.amount ? 'settled' : 'partially_paid';
 
     if (import.meta.env.VITE_SUPABASE_URL) {
-      await supabase.from('lendings').update({ status: newStatus }).eq('id', id);
+      await supabase.from('lendings').update({ amount_paid: newAmountPaid, status: newStatus }).eq('id', id);
 
-      if (newStatus === 'settled' && recordToUpdate) {
-        const newTx: Transaction = {
-          id: crypto.randomUUID(),
-          created_at: new Date().toISOString(),
-          amount: recordToUpdate.amount,
-          type: 'income',
-          category: 'Lending Repayment',
-          description: `Repayment from ${recordToUpdate.person_name}`
-        };
-        await supabase.from('transactions').insert([newTx]);
-        setTransactions((prev) => [...prev, newTx]);
-      }
+      const newTx: Transaction = {
+        id: crypto.randomUUID(),
+        created_at: new Date().toISOString(),
+        amount: paymentAmount,
+        type: 'income',
+        category: 'Lending Repayment',
+        description: `Repayment from ${recordToUpdate.person_name}`
+      };
+      await supabase.from('transactions').insert([newTx]);
+      setTransactions((prev) => [...prev, newTx]);
     } else {
-      if (newStatus === 'settled' && recordToUpdate) {
-        const newTx: Transaction = {
-          id: crypto.randomUUID(),
-          created_at: new Date().toISOString(),
-          amount: recordToUpdate.amount,
-          type: 'income',
-          category: 'Lending Repayment',
-          description: `Repayment from ${recordToUpdate.person_name}`
-        };
-        setTransactions((prev) => [...prev, newTx]);
-      }
+      const newTx: Transaction = {
+        id: crypto.randomUUID(),
+        created_at: new Date().toISOString(),
+        amount: paymentAmount,
+        type: 'income',
+        category: 'Lending Repayment',
+        description: `Repayment from ${recordToUpdate.person_name}`
+      };
+      setTransactions((prev) => [...prev, newTx]);
     }
 
     setLendings((prev) =>
-      prev.map((l) => (l.id === id ? { ...l, status: newStatus as any } : l))
+      prev.map((l) => (l.id === id ? { ...l, amount_paid: newAmountPaid, status: newStatus as any } : l))
     );
   };
 
@@ -197,41 +196,40 @@ function App() {
     setShowBorrowForm(false);
   };
 
-  const handleUpdateBorrowingStatus = async (id: string, currentStatus: string) => {
-    const newStatus = currentStatus === 'pending' ? 'settled' : 'pending';
+  const handleAddBorrowingPayment = async (id: string, paymentAmount: number) => {
     const recordToUpdate = borrowings.find(b => b.id === id);
+    if (!recordToUpdate) return;
+
+    const newAmountPaid = recordToUpdate.amount_paid + paymentAmount;
+    const newStatus = newAmountPaid >= recordToUpdate.amount ? 'settled' : 'partially_paid';
 
     if (import.meta.env.VITE_SUPABASE_URL) {
-      await supabase.from('borrowings').update({ status: newStatus }).eq('id', id);
+      await supabase.from('borrowings').update({ amount_paid: newAmountPaid, status: newStatus }).eq('id', id);
 
-      if (newStatus === 'settled' && recordToUpdate) {
-        const newTx: Transaction = {
-          id: crypto.randomUUID(),
-          created_at: new Date().toISOString(),
-          amount: recordToUpdate.amount,
-          type: 'expense',
-          category: 'Borrowing Repayment',
-          description: `Repaid ${recordToUpdate.person_name}`
-        };
-        await supabase.from('transactions').insert([newTx]);
-        setTransactions((prev) => [...prev, newTx]);
-      }
+      const newTx: Transaction = {
+        id: crypto.randomUUID(),
+        created_at: new Date().toISOString(),
+        amount: paymentAmount,
+        type: 'expense',
+        category: 'Borrowing Repayment',
+        description: `Repaid ${recordToUpdate.person_name}`
+      };
+      await supabase.from('transactions').insert([newTx]);
+      setTransactions((prev) => [...prev, newTx]);
     } else {
-      if (newStatus === 'settled' && recordToUpdate) {
-        const newTx: Transaction = {
-          id: crypto.randomUUID(),
-          created_at: new Date().toISOString(),
-          amount: recordToUpdate.amount,
-          type: 'expense',
-          category: 'Borrowing Repayment',
-          description: `Repaid ${recordToUpdate.person_name}`
-        };
-        setTransactions((prev) => [...prev, newTx]);
-      }
+      const newTx: Transaction = {
+        id: crypto.randomUUID(),
+        created_at: new Date().toISOString(),
+        amount: paymentAmount,
+        type: 'expense',
+        category: 'Borrowing Repayment',
+        description: `Repaid ${recordToUpdate.person_name}`
+      };
+      setTransactions((prev) => [...prev, newTx]);
     }
 
     setBorrowings((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, status: newStatus as any } : b))
+      prev.map((b) => (b.id === id ? { ...b, amount_paid: newAmountPaid, status: newStatus as any } : b))
     );
   };
 
@@ -466,7 +464,7 @@ function App() {
         {activeTab === 'lending' && (
           <LendingTracker
             lendings={lendings}
-            onUpdateStatus={handleUpdateLendingStatus}
+            onAddPayment={handleAddLendingPayment}
             onDelete={handleDeleteLending}
           />
         )}
@@ -474,7 +472,7 @@ function App() {
         {activeTab === 'borrowing' && (
           <BorrowTracker
             borrowings={borrowings}
-            onUpdateStatus={handleUpdateBorrowingStatus}
+            onAddPayment={handleAddBorrowingPayment}
             onDelete={handleDeleteBorrowing}
           />
         )}
