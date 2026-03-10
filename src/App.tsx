@@ -439,54 +439,62 @@ function App() {
         {/* Navigation Links */}
         <div className="flex flex-row md:flex-col gap-1 md:gap-3 px-2 md:px-3 w-full h-full md:h-auto justify-around items-center md:items-stretch">
           <button
-            className={`flex flex-col md:flex-row items-center justify-center md:justify-start px-2 py-1 md:px-4 md:py-3.5 w-full rounded-lg text-center md:text-left transition-all duration-300 overflow-hidden ${activeTab === 'dashboard'
-              ? 'bg-black text-white dark:bg-white dark:text-black'
-              : 'hover:bg-slate-50 dark:hover:bg-slate-900 text-slate-500 hover:text-black dark:hover:text-white'
-              }`}
+            className="flex flex-col md:flex-row items-center justify-center md:justify-start py-1 md:py-0 w-full rounded-lg text-center md:text-left transition-all duration-300"
             onClick={() => setActiveTab('dashboard')}
           >
-            <Activity size={22} className={`shrink-0 transition-transform duration-300 ${activeTab === 'dashboard' ? 'scale-110' : ''}`} />
-            <span className="text-[10px] md:text-base mt-1 md:mt-0 ml-0 md:ml-4 font-semibold whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
-              Dashboard
+            <span className={`flex flex-col md:flex-row items-center justify-center md:justify-start px-3 py-1.5 md:px-4 md:py-3.5 rounded-lg transition-all duration-300 ${activeTab === 'dashboard'
+                ? 'bg-black text-white dark:bg-white dark:text-black'
+                : 'text-slate-500 hover:text-black dark:hover:text-white'
+              }`}>
+              <Activity size={22} className={`shrink-0 transition-transform duration-300 ${activeTab === 'dashboard' ? 'scale-110' : ''}`} />
+              <span className="text-[10px] md:text-base mt-1 md:mt-0 ml-0 md:ml-4 font-semibold whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
+                Dashboard
+              </span>
             </span>
           </button>
 
           <button
-            className={`flex flex-col md:flex-row items-center justify-center md:justify-start px-2 py-1 md:px-4 md:py-3.5 w-full rounded-lg text-center md:text-left transition-all duration-300 overflow-hidden ${activeTab === 'transactions'
-              ? 'bg-black text-white dark:bg-white dark:text-black'
-              : 'hover:bg-slate-50 dark:hover:bg-slate-900 text-slate-500 hover:text-black dark:hover:text-white'
-              }`}
+            className="flex flex-col md:flex-row items-center justify-center md:justify-start py-1 md:py-0 w-full rounded-lg text-center md:text-left transition-all duration-300"
             onClick={() => setActiveTab('transactions')}
           >
-            <Wallet size={22} className={`shrink-0 transition-transform duration-300 ${activeTab === 'transactions' ? 'scale-110' : ''}`} />
-            <span className="text-[10px] md:text-base mt-1 md:mt-0 ml-0 md:ml-4 font-semibold whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 md:delay-75">
-              Transactions
+            <span className={`flex flex-col md:flex-row items-center justify-center md:justify-start px-3 py-1.5 md:px-4 md:py-3.5 rounded-lg transition-all duration-300 ${activeTab === 'transactions'
+                ? 'bg-black text-white dark:bg-white dark:text-black'
+                : 'text-slate-500 hover:text-black dark:hover:text-white'
+              }`}>
+              <Wallet size={22} className={`shrink-0 transition-transform duration-300 ${activeTab === 'transactions' ? 'scale-110' : ''}`} />
+              <span className="text-[10px] md:text-base mt-1 md:mt-0 ml-0 md:ml-4 font-semibold whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 md:delay-75">
+                Transactions
+              </span>
             </span>
           </button>
 
           <button
-            className={`flex flex-col md:flex-row items-center justify-center md:justify-start px-2 py-1 md:px-4 md:py-3.5 w-full rounded-lg text-center md:text-left transition-all duration-300 overflow-hidden ${activeTab === 'lending'
-              ? 'bg-black text-white dark:bg-white dark:text-black'
-              : 'hover:bg-slate-50 dark:hover:bg-slate-900 text-slate-500 hover:text-black dark:hover:text-white'
-              }`}
+            className="flex flex-col md:flex-row items-center justify-center md:justify-start py-1 md:py-0 w-full rounded-lg text-center md:text-left transition-all duration-300"
             onClick={() => setActiveTab('lending')}
           >
-            <Users size={22} className={`shrink-0 transition-transform duration-300 ${activeTab === 'lending' ? 'scale-110' : ''}`} />
-            <span className="text-[10px] md:text-base mt-1 md:mt-0 ml-0 md:ml-4 font-semibold whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 md:delay-150">
-              Lending Logs
+            <span className={`flex flex-col md:flex-row items-center justify-center md:justify-start px-3 py-1.5 md:px-4 md:py-3.5 rounded-lg transition-all duration-300 ${activeTab === 'lending'
+                ? 'bg-black text-white dark:bg-white dark:text-black'
+                : 'text-slate-500 hover:text-black dark:hover:text-white'
+              }`}>
+              <Users size={22} className={`shrink-0 transition-transform duration-300 ${activeTab === 'lending' ? 'scale-110' : ''}`} />
+              <span className="text-[10px] md:text-base mt-1 md:mt-0 ml-0 md:ml-4 font-semibold whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 md:delay-150">
+                Lending Logs
+              </span>
             </span>
           </button>
 
           <button
-            className={`flex flex-col md:flex-row items-center justify-center md:justify-start px-2 py-1 md:px-4 md:py-3.5 w-full rounded-lg text-center md:text-left transition-all duration-300 overflow-hidden ${activeTab === 'borrowing'
-              ? 'bg-black text-white dark:bg-white dark:text-black'
-              : 'hover:bg-slate-50 dark:hover:bg-slate-900 text-slate-500 hover:text-black dark:hover:text-white'
-              }`}
+            className="flex flex-col md:flex-row items-center justify-center md:justify-start py-1 md:py-0 w-full rounded-lg text-center md:text-left transition-all duration-300"
             onClick={() => setActiveTab('borrowing')}
           >
-            <Download size={22} className={`shrink-0 transition-transform duration-300 ${activeTab === 'borrowing' ? 'scale-110' : ''}`} />
-            <span className="text-[10px] md:text-base mt-1 md:mt-0 ml-0 md:ml-4 font-semibold whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 md:delay-200">
-              Borrowing Logs
+            <span className={`flex flex-col md:flex-row items-center justify-center md:justify-start px-3 py-1.5 md:px-4 md:py-3.5 rounded-lg transition-all duration-300 ${activeTab === 'borrowing'
+                ? 'bg-black text-white dark:bg-white dark:text-black'
+                : 'text-slate-500 hover:text-black dark:hover:text-white'
+              }`}>
+              <Download size={22} className={`shrink-0 transition-transform duration-300 ${activeTab === 'borrowing' ? 'scale-110' : ''}`} />
+              <span className="text-[10px] md:text-base mt-1 md:mt-0 ml-0 md:ml-4 font-semibold whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 md:delay-200">
+                Borrowing Logs
+              </span>
             </span>
           </button>
         </div>
