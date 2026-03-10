@@ -320,7 +320,7 @@ function App() {
         <div className="flex flex-row md:flex-col gap-1 md:gap-3 px-2 md:px-3 w-full h-full md:h-auto justify-around items-center md:items-stretch">
           <button
             className={`flex flex-col md:flex-row items-center justify-center md:justify-start px-2 py-1 md:px-4 md:py-3.5 w-full rounded-lg text-center md:text-left transition-all duration-300 overflow-hidden ${activeTab === 'dashboard'
-              ? 'text-black dark:text-white md:bg-black md:text-white md:dark:bg-white md:dark:text-black'
+              ? 'bg-black text-white dark:bg-white dark:text-black'
               : 'hover:bg-slate-50 dark:hover:bg-slate-900 text-slate-500 hover:text-black dark:hover:text-white'
               }`}
             onClick={() => setActiveTab('dashboard')}
@@ -333,7 +333,7 @@ function App() {
 
           <button
             className={`flex flex-col md:flex-row items-center justify-center md:justify-start px-2 py-1 md:px-4 md:py-3.5 w-full rounded-lg text-center md:text-left transition-all duration-300 overflow-hidden ${activeTab === 'transactions'
-              ? 'text-black dark:text-white md:bg-black md:text-white md:dark:bg-white md:dark:text-black'
+              ? 'bg-black text-white dark:bg-white dark:text-black'
               : 'hover:bg-slate-50 dark:hover:bg-slate-900 text-slate-500 hover:text-black dark:hover:text-white'
               }`}
             onClick={() => setActiveTab('transactions')}
@@ -346,7 +346,7 @@ function App() {
 
           <button
             className={`flex flex-col md:flex-row items-center justify-center md:justify-start px-2 py-1 md:px-4 md:py-3.5 w-full rounded-lg text-center md:text-left transition-all duration-300 overflow-hidden ${activeTab === 'lending'
-              ? 'text-black dark:text-white md:bg-black md:text-white md:dark:bg-white md:dark:text-black'
+              ? 'bg-black text-white dark:bg-white dark:text-black'
               : 'hover:bg-slate-50 dark:hover:bg-slate-900 text-slate-500 hover:text-black dark:hover:text-white'
               }`}
             onClick={() => setActiveTab('lending')}
@@ -359,7 +359,7 @@ function App() {
 
           <button
             className={`flex flex-col md:flex-row items-center justify-center md:justify-start px-2 py-1 md:px-4 md:py-3.5 w-full rounded-lg text-center md:text-left transition-all duration-300 overflow-hidden ${activeTab === 'borrowing'
-              ? 'text-black dark:text-white md:bg-black md:text-white md:dark:bg-white md:dark:text-black'
+              ? 'bg-black text-white dark:bg-white dark:text-black'
               : 'hover:bg-slate-50 dark:hover:bg-slate-900 text-slate-500 hover:text-black dark:hover:text-white'
               }`}
             onClick={() => setActiveTab('borrowing')}
