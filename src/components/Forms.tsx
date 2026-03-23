@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import type { TransactionType } from '../types/database.types';
 
-export function TransactionForm({ onSubmit, onCancel }: { onSubmit: (data: any) => void; onCancel: () => void }) {
+export function TransactionForm({ onSubmit, onCancel, defaultAmount }: { onSubmit: (data: any) => void; onCancel: () => void; defaultAmount?: number }) {
     const [type, setType] = useState<TransactionType>('expense');
-    const [amount, setAmount] = useState('');
+    const [amount, setAmount] = useState(defaultAmount?.toString() ?? '');
     const [category, setCategory] = useState('');
     const [description, setDescription] = useState('');
     const [date, setDate] = useState('');
@@ -48,6 +48,7 @@ export function TransactionForm({ onSubmit, onCancel }: { onSubmit: (data: any) 
                         <label className="dark:text-slate-300">Amount (₹)</label>
                         <input
                             type="number"
+                            inputMode="decimal"
                             step="0.01"
                             value={amount}
                             onChange={(e) => setAmount(e.target.value)}

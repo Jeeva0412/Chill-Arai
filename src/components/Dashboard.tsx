@@ -64,51 +64,75 @@ export function Dashboard({ transactions, lendings, borrowings, onNavigate }: Da
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem' }}>
 
                 {/* Revenue/Income Card */}
-                <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex-col gap-2 relative overflow-hidden transition-colors duration-300">
-                    <div className="flex justify-between items-center text-slate-500 dark:text-slate-400 text-sm font-semibold mb-2 uppercase tracking-wide transition-colors">
+                <div style={{ background: 'var(--bg-icon)', borderRadius: '1.25rem' }}
+                    className="p-6 flex-col gap-2 relative overflow-hidden transition-colors duration-300">
+                    <div className="flex justify-between items-center text-sm font-semibold mb-2 uppercase tracking-wide"
+                        style={{ color: 'var(--text-secondary)' }}>
                         <span>Revenue</span>
-                        <div className="bg-slate-100 dark:bg-slate-900 p-1.5 rounded-full transition-colors"><TrendingDown className="text-black dark:text-white" size={16} /></div>
+                        <div style={{ background: 'var(--bg-icon)', borderRadius: '50%' }} className="p-1.5">
+                            <TrendingDown size={16} style={{ color: 'var(--accent-primary)' }} />
+                        </div>
                     </div>
-                    <div className="text-3xl font-extrabold text-black dark:text-white tracking-tight transition-colors">₹{totalIncome.toLocaleString()}</div>
+                    <div className="text-3xl font-extrabold tracking-tight" style={{ color: 'var(--text-primary)' }}>
+                        ₹{totalIncome.toLocaleString()}
+                    </div>
                 </div>
 
                 {/* Expense Card */}
                 <div
                     onClick={() => onNavigate('transactions')}
-                    className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex-col gap-2 relative overflow-hidden transition-all duration-300 cursor-pointer hover:-translate-y-1 hover:shadow-lg"
+                    style={{ background: 'var(--bg-icon)', borderRadius: '1.25rem' }}
+                    className="p-6 flex-col gap-2 relative overflow-hidden transition-all duration-300 cursor-pointer hover:-translate-y-1 hover:shadow-lg"
                     title="View Transactions"
                 >
-                    <div className="flex justify-between items-center text-slate-500 dark:text-slate-400 text-sm font-semibold mb-2 uppercase tracking-wide transition-colors">
+                    <div className="flex justify-between items-center text-sm font-semibold mb-2 uppercase tracking-wide"
+                        style={{ color: 'var(--text-secondary)' }}>
                         <span>Expenses</span>
-                        <div className="bg-slate-100 dark:bg-slate-900 p-1.5 rounded-full transition-colors"><TrendingUp className="text-black dark:text-white" size={16} /></div>
+                        <div style={{ background: 'var(--bg-icon)', borderRadius: '50%' }} className="p-1.5">
+                            <TrendingUp size={16} style={{ color: 'var(--accent-primary)' }} />
+                        </div>
                     </div>
-                    <div className="text-3xl font-extrabold text-black dark:text-white tracking-tight transition-colors">₹{totalExpense.toLocaleString()}</div>
+                    <div className="text-3xl font-extrabold tracking-tight" style={{ color: 'var(--text-primary)' }}>
+                        ₹{totalExpense.toLocaleString()}
+                    </div>
                 </div>
 
                 {/* Lent Card */}
                 <div
                     onClick={() => onNavigate('lending')}
-                    className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex-col gap-2 relative overflow-hidden transition-all duration-300 cursor-pointer hover:-translate-y-1 hover:shadow-lg"
+                    style={{ background: 'var(--bg-icon)', borderRadius: '1.25rem' }}
+                    className="p-6 flex-col gap-2 relative overflow-hidden transition-all duration-300 cursor-pointer hover:-translate-y-1 hover:shadow-lg"
                     title="View Lending Logs"
                 >
-                    <div className="flex justify-between items-center text-slate-500 dark:text-slate-400 text-sm font-semibold mb-2 uppercase tracking-wide transition-colors">
+                    <div className="flex justify-between items-center text-sm font-semibold mb-2 uppercase tracking-wide"
+                        style={{ color: 'var(--text-secondary)' }}>
                         <span>Total Lent Out</span>
-                        <div className="bg-slate-100 dark:bg-slate-900 p-1.5 rounded-full transition-colors"><Users className="text-black dark:text-white" size={16} /></div>
+                        <div style={{ background: 'var(--bg-icon)', borderRadius: '50%' }} className="p-1.5">
+                            <Users size={16} style={{ color: 'var(--accent-primary)' }} />
+                        </div>
                     </div>
-                    <div className="text-3xl font-extrabold text-black dark:text-white tracking-tight transition-colors">₹{totalLent.toLocaleString()}</div>
+                    <div className="text-3xl font-extrabold tracking-tight" style={{ color: 'var(--text-primary)' }}>
+                        ₹{totalLent.toLocaleString()}
+                    </div>
                 </div>
 
                 {/* Borrowed Card */}
                 <div
                     onClick={() => onNavigate('borrowing')}
-                    className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex-col gap-2 relative overflow-hidden transition-all duration-300 cursor-pointer hover:-translate-y-1 hover:shadow-lg"
+                    style={{ background: 'var(--bg-icon)', borderRadius: '1.25rem' }}
+                    className="p-6 flex-col gap-2 relative overflow-hidden transition-all duration-300 cursor-pointer hover:-translate-y-1 hover:shadow-lg"
                     title="View Borrowing Logs"
                 >
-                    <div className="flex justify-between items-center text-slate-500 dark:text-slate-400 text-sm font-semibold mb-2 uppercase tracking-wide transition-colors">
+                    <div className="flex justify-between items-center text-sm font-semibold mb-2 uppercase tracking-wide"
+                        style={{ color: 'var(--text-secondary)' }}>
                         <span>Total Borrowed</span>
-                        <div className="bg-slate-100 dark:bg-slate-900 p-1.5 rounded-full transition-colors"><Download className="text-black dark:text-white" size={16} /></div>
+                        <div style={{ background: 'var(--bg-app)', borderRadius: '50%' }} className="p-1.5">
+                            <Download size={16} style={{ color: 'var(--accent-primary)' }} />
+                        </div>
                     </div>
-                    <div className="text-3xl font-extrabold text-black dark:text-white tracking-tight transition-colors">₹{totalBorrowed.toLocaleString()}</div>
+                    <div className="text-3xl font-extrabold tracking-tight" style={{ color: 'var(--text-primary)' }}>
+                        ₹{totalBorrowed.toLocaleString()}
+                    </div>
                 </div>
 
             </div>
@@ -117,7 +141,7 @@ export function Dashboard({ transactions, lendings, borrowings, onNavigate }: Da
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
 
                 {/* Expense Chart */}
-                <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex-col gap-4 transition-colors duration-300">
+                <div style={{ background: 'var(--bg-icon)', borderColor: 'var(--glass-border)' }} className="border rounded-2xl p-6 flex-col gap-4 transition-colors duration-300">
                     <h3 className="text-lg font-bold text-black dark:text-white border-b border-slate-100 dark:border-slate-800 pb-2 mb-2 transition-colors">Expense Breakdown</h3>
                     {expenseData.length > 0 ? (
                         <div className="h-[300px] w-full">
@@ -148,14 +172,15 @@ export function Dashboard({ transactions, lendings, borrowings, onNavigate }: Da
                             </ResponsiveContainer>
                         </div>
                     ) : (
-                        <div className="h-[300px] flex items-center justify-center text-slate-400 dark:text-slate-500 font-medium bg-slate-50/50 dark:bg-slate-900/50 rounded-2xl transition-colors">
+                        <div className="h-[300px] flex items-center justify-center font-medium rounded-2xl transition-colors"
+                            style={{ background: 'var(--bg-app)', color: 'var(--text-secondary)' }}>
                             No expenses recorded yet.
                         </div>
                     )}
                 </div>
 
                 {/* Income Chart */}
-                <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex-col gap-4 transition-colors duration-300">
+                <div style={{ background: 'var(--bg-icon)', borderColor: 'var(--glass-border)' }} className="border rounded-2xl p-6 flex-col gap-4 transition-colors duration-300">
                     <h3 className="text-lg font-bold text-black dark:text-white border-b border-slate-100 dark:border-slate-800 pb-2 mb-2 transition-colors">Income Sources</h3>
                     {incomeData.length > 0 ? (
                         <div className="h-[300px] w-full">
@@ -186,7 +211,8 @@ export function Dashboard({ transactions, lendings, borrowings, onNavigate }: Da
                             </ResponsiveContainer>
                         </div>
                     ) : (
-                        <div className="h-[300px] flex items-center justify-center text-slate-400 dark:text-slate-500 font-medium bg-slate-50/50 dark:bg-slate-900/50 rounded-2xl transition-colors">
+                        <div className="h-[300px] flex items-center justify-center font-medium rounded-2xl transition-colors"
+                            style={{ background: 'var(--bg-app)', color: 'var(--text-secondary)' }}>
                             No income recorded yet.
                         </div>
                     )}

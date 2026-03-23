@@ -1,84 +1,112 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ─── PHASE 7: Premium Gold / Charcoal Design System ─── */
+
 :root {
-  /* Color Palette - Minimal Monochromatic */
-  --bg-primary: #ffffff;
-  --bg-secondary: #f9fafb;
-  --bg-tertiary: #f3f4f6;
+  /* Backgrounds & Surfaces */
+  --bg-app: #F7F1E6;
+  --bg-header: #1B1914;
+  --bg-surface: #FFFFFF;
+  --bg-icon: #FEF1D5;
 
-  --text-primary: #111827;
-  --text-secondary: #4b5563;
-  --text-muted: #9ca3af;
+  /* Typography */
+  --text-primary: #1B1914;
+  --text-secondary: #A1A1A1;
+  --text-header-amount: #FFFFFF;
 
-  --accent-primary: #000000;
-  --accent-primary-hover: #374151;
-  --accent-success: #111827;
-  /* Replaced with black representing positive */
-  --accent-danger: #4b5563;
-  /* Replaced with dark grey representing negative */
-  --accent-warning: #6b7280;
-  --accent-info: #374151;
+  /* Accents & Buttons */
+  --accent-primary: #604D1B;
+  --accent-button: #E6C877;
+  --text-accent-button: #1B1914;
 
-  /* Glassmorphism Variables - Removed for flat design */
+  /* legacy tokens */
+  --bg-primary: #F7F1E6;
+  --bg-secondary: #EDE6D4;
+  --bg-tertiary: #E0D8C4;
+  --text-muted: #BBBBBB;
+  --accent-primary-hover: #7A6228;
+  --accent-success: #2D6A4F;
+  --accent-danger: #A44444;
+  --accent-warning: #C97D1A;
+  --accent-info: #2C5F82;
   --glass-bg: transparent;
-  --glass-border: #e5e7eb;
-  --glass-shadow: none;
-
-  /* Utilities - Sharper corners */
-  --radius-sm: 0;
-  --radius-md: 0.25rem;
-  --radius-lg: 0.25rem;
-  --radius-xl: 0.25rem;
-
+  --glass-border: rgba(27,25,20,0.1);
+  --glass-shadow: 0 2px 16px rgba(27,25,20,0.06);
+  --radius-sm: 0.5rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.25rem;
+  --radius-xl: 1.5rem;
   --transition-fast: 0.15s ease-in-out;
   --transition-normal: 0.3s ease;
 }
 
-* {
+[data-theme="dark"] {
+  /* Backgrounds & Surfaces */
+  --bg-app: #12110D;
+  --bg-header: #231A0B;
+  --bg-surface: #1C1D21;         /* True Slate */
+  --bg-icon: #2A2010;            /* Dark muted gold */
+
+  /* Typography */
+  --text-primary: #FFFFFF;
+  --text-secondary: #A5A5A5;
+  --text-header-amount: #EBC45D;
+
+  /* Accents & Buttons */
+  --accent-primary: #EBC45D;
+  --accent-button: #4C3810;
+  --text-accent-button: #FFFFFF;
+
+  /* legacy dark overrides */
+  --bg-primary: #12110D;
+  --bg-secondary: #1C1D21;
+  --bg-tertiary: #2A2820;
+  --text-muted: #666666;
+  --accent-primary-hover: #F0CD6E;
+  --glass-border: rgba(255,255,255,0.08);
+  --glass-shadow: none;
+}
+
+/* ─── PHASE 5: Mobile-Native Touch Optimizations ─── */
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+html {
+  height: 100%;
 }
 
 body {
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-  background-color: var(--bg-primary);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-app);
   color: var(--text-primary);
   line-height: 1.5;
-  min-height: 100vh;
+  min-height: 100%;
+  min-height: -webkit-fill-available;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior-y: none;
+  overscroll-behavior-x: none;
+  user-select: none;
 }
 
-html.dark body {
-  background-color: #020617;
-  /* slate-950 */
-  color: #f8fafc;
-  /* slate-50 */
+input, textarea, select {
+  user-select: text;
 }
 
-/* Typography */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+/* ─── Typography ─── */
+h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
-  letter-spacing: -0.05em;
+  letter-spacing: -0.04em;
   color: var(--text-primary);
-}
-
-html.dark h1,
-html.dark h2,
-html.dark h3,
-html.dark h4,
-html.dark h5,
-html.dark h6 {
-  color: #f8fafc;
+  line-height: 1.2;
 }
 
 p {
@@ -95,251 +123,134 @@ a:hover {
   color: var(--accent-primary-hover);
 }
 
-/* Common Classes */
+/* ─── Card / Panel ─── */
 .glass-panel {
-  background: var(--bg-secondary);
+  background: var(--bg-surface);
   border: 1px solid var(--glass-border);
-  border-radius: var(--radius-md);
-  box-shadow: none;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shadow);
 }
 
 .subtle-panel {
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--bg-tertiary);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
 }
 
-/* Animations */
+/* ─── Animations ─── */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.4s ease-out forwards;
+  animation: fadeIn 0.35s ease-out forwards;
 }
 
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--bg-tertiary); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
-::-webkit-scrollbar-track {
-  background: var(--bg-primary);
-}
+/* ─── Flex Utilities ─── */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.gap-2 { gap: 0.5rem; }
+.gap-4 { gap: 1rem; }
+.gap-6 { gap: 1.5rem; }
+.w-full { width: 100%; }
+.h-full { height: 100%; }
 
-::-webkit-scrollbar-thumb {
-  background: var(--bg-tertiary);
-  border-radius: 4px;
-}
+/* ─── Semantic text ─── */
+.text-success { color: var(--accent-success); }
+.text-danger  { color: var(--accent-danger); }
+.text-muted   { color: var(--text-muted); }
 
-::-webkit-scrollbar-thumb:hover {
-  background: var(--text-muted);
-}
-
-/* Global utility classes */
-.flex {
-  display: flex;
-}
-
-.flex-col {
-  flex-direction: column;
-}
-
-.items-center {
-  align-items: center;
-}
-
-.justify-center {
-  justify-content: center;
-}
-
-.justify-between {
-  justify-content: space-between;
-}
-
-.gap-2 {
-  gap: 0.5rem;
-}
-
-.gap-4 {
-  gap: 1rem;
-}
-
-.gap-6 {
-  gap: 1.5rem;
-}
-
-.w-full {
-  width: 100%;
-}
-
-.h-full {
-  height: 100%;
-}
-
-.text-success {
-  color: var(--accent-success);
-}
-
-.text-danger {
-  color: var(--accent-danger);
-}
-
-.text-muted {
-  color: var(--text-muted);
-}
-
-.text-xs {
-  font-size: 0.75rem;
-}
-
-.text-sm {
-  font-size: 0.875rem;
-}
-
-.text-lg {
-  font-size: 1.125rem;
-}
-
-.text-xl {
-  font-size: 1.25rem;
-}
-
-.font-bold {
-  font-weight: 700;
-}
-
-.font-semibold {
-  font-weight: 600;
-}
-
-.font-medium {
-  font-weight: 500;
-}
-
-.mb-2 {
-  margin-bottom: 0.5rem;
-}
-
-.mb-4 {
-  margin-bottom: 1rem;
-}
-
-.mt-4 {
-  margin-top: 1rem;
-}
-
-.p-4 {
-  padding: 1rem;
-}
-
-.p-6 {
-  padding: 1.5rem;
-}
-
-.p-8 {
-  padding: 2rem;
-}
-
-/* Custom border utility for sidebar active states */
-.border-glass-border {
-  border-color: var(--glass-border);
-}
-
-/* Interactive elements */
+/* ─── Interactive elements ─── */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem 1rem;
+  padding: 0.625rem 1.25rem;
   border-radius: var(--radius-md);
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: all var(--transition-fast);
   border: none;
   gap: 0.5rem;
   font-family: inherit;
-  font-size: 0.875rem;
+  font-size: 0.9rem;
+  letter-spacing: -0.01em;
 }
 
 .btn-primary {
-  background-color: var(--accent-primary);
-  color: white;
-  border-radius: 0;
+  background-color: var(--bg-header);
+  color: var(--text-header-amount);
 }
-
-.btn-primary:hover {
-  background-color: var(--accent-primary-hover);
-}
+.btn-primary:hover { opacity: 0.9; }
 
 .btn-secondary {
-  background-color: var(--bg-tertiary);
+  background-color: var(--bg-surface);
   color: var(--text-primary);
-  border: 1px solid var(--glass-border);
+  border: 1.5px solid var(--glass-border);
 }
-
-.btn-secondary:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-}
+.btn-secondary:hover { background-color: var(--bg-icon); }
 
 .btn-danger {
   background-color: transparent;
-  color: var(--text-primary);
-  border: 1px solid var(--text-primary);
+  color: var(--accent-danger);
+  border: 1.5px solid var(--accent-danger);
 }
-
 .btn-danger:hover {
-  background-color: var(--text-primary);
+  background-color: var(--accent-danger);
   color: white;
 }
 
-/* Forms */
-input,
-textarea,
-select {
+/* ─── Forms ─── */
+input, textarea, select {
   width: 100%;
   padding: 0.75rem 1rem;
-  background-color: transparent;
-  border: 1px solid var(--glass-border);
-  border-radius: 0;
+  background-color: var(--bg-app);
+  border: 1.5px solid var(--glass-border);
+  border-radius: var(--radius-md);
   color: var(--text-primary);
   font-family: inherit;
-  transition: border-color var(--transition-fast);
+  font-size: 0.95rem;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
 }
 
-input:focus,
-textarea:focus,
-select:focus {
+input:focus, textarea:focus, select:focus {
   outline: none;
   border-color: var(--accent-primary);
+  background-color: var(--bg-surface);
 }
 
 label {
   display: block;
-  margin-bottom: 0.5rem;
-  font-size: 0.875rem;
-  font-weight: 500;
+  margin-bottom: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   color: var(--text-secondary);
 }
 
-/* Remove arrows from number input */
+/* Remove arrows from number inputs */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-
 input[type="number"] {
   -moz-appearance: textfield;
-  /* Firefox */
   appearance: textfield;
 }
+
+/* ─── Safe Area Insets (Phase 5) ─── */
+.safe-top    { padding-top: env(safe-area-inset-top); }
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+.pb-safe     { padding-bottom: max(1.5rem, env(safe-area-inset-bottom)); }
