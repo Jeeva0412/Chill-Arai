@@ -32,7 +32,7 @@ export function TransactionManager({ transactions, onDelete }: TransactionManage
     }, [transactions, searchQuery, startDate, endDate]);
 
     return (
-        <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex-col gap-4 w-full transition-colors duration-300">
+        <div style={{ background: 'var(--bg-icon)', borderColor: 'var(--glass-border)' }} className="border rounded-2xl p-6 flex-col gap-4 w-full transition-colors duration-300">
 
             {/* Filters */}
             <div className="flex flex-row flex-wrap sm:flex-nowrap gap-3 mb-2">
@@ -109,14 +109,15 @@ export function TransactionManager({ transactions, onDelete }: TransactionManage
 
             <div className="flex-col gap-3 mt-4">
                 {filteredAndSortedTransactions.length === 0 ? (
-                    <div className="text-center p-8 text-slate-500 dark:text-slate-400 font-medium border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 transition-colors">
+                    <div style={{ background: 'var(--bg-app)', borderColor: 'var(--glass-border)' }} className="text-center p-8 text-slate-500 dark:text-slate-400 font-medium border rounded-xl transition-colors">
                         {transactions.length === 0 ? "No transactions found. Add one to get started." : "No transactions match your search."}
                     </div>
                 ) : (
                     filteredAndSortedTransactions.map((t) => (
                         <div
                             key={t.id}
-                            className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-900 transition-all group"
+                            style={{ background: 'var(--bg-icon)', borderColor: 'var(--glass-border)' }}
+                            className="border rounded-xl p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 cursor-pointer hover:opacity-80 transition-all group"
                             onClick={() => setSelectedTransaction(t)}
                         >
                             <div className="flex items-center gap-4 w-full sm:w-auto">

@@ -50,7 +50,7 @@ export function BorrowTracker({ borrowings, onAddPayment, onDelete }: BorrowTrac
         .reduce((sum, b) => sum + (b.amount - b.amount_paid), 0);
 
     return (
-        <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex-col gap-4 w-full transition-colors duration-300">
+        <div style={{ background: 'var(--bg-icon)', borderColor: 'var(--glass-border)' }} className="border rounded-2xl p-6 flex-col gap-4 w-full transition-colors duration-300">
             {overallTotalBorrowed > 0 && (
                 <div className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 text-center sm:text-left mb-2 transition-colors duration-300">
                     <p className="text-slate-600 dark:text-slate-400 text-lg md:text-xl font-medium">
@@ -71,7 +71,7 @@ export function BorrowTracker({ borrowings, onAddPayment, onDelete }: BorrowTrac
             )}
             <div className="flex flex-col gap-4 mt-2 w-full">
                 {displayGroups.length === 0 ? (
-                    <div className="w-full text-center p-8 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 transition-colors">
+                    <div style={{ background: 'var(--bg-app)', borderColor: 'var(--glass-border)' }} className="w-full text-center p-8 text-slate-500 dark:text-slate-400 border rounded-xl transition-colors">
                         {borrowings.length === 0 ? "You haven't borrowed money from anyone yet." : "No active borrowing accounts."}
                     </div>
                 ) : (
@@ -81,7 +81,7 @@ export function BorrowTracker({ borrowings, onAddPayment, onDelete }: BorrowTrac
                         const isExpanded = expandedPerson === personName;
 
                         return (
-                            <div key={personName} className={`bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl flex flex-col gap-0 relative overflow-hidden transition-all duration-300 ${allSettled ? 'opacity-50' : ''}`}>
+                            <div key={personName} style={{ background: 'var(--bg-icon)', borderColor: 'var(--glass-border)' }} className={`border rounded-2xl flex flex-col gap-0 relative overflow-hidden transition-all duration-300 ${allSettled ? 'opacity-50' : ''}`}>
 
                                 {/* Header / Summary Card */}
                                 <div
@@ -114,10 +114,10 @@ export function BorrowTracker({ borrowings, onAddPayment, onDelete }: BorrowTrac
                                 </div>
 
                                 {/* Expanded Individual Records List */}
-                                <div className={`transition-all duration-300 bg-white dark:bg-slate-950 w-full ${isExpanded ? 'max-h-[1000px] border-t border-slate-200 dark:border-slate-800' : 'max-h-0 opacity-0 overflow-hidden'}`}>
+                                <div style={{ background: 'var(--bg-icon)' }} className={`transition-all duration-300 w-full ${isExpanded ? 'max-h-[1000px] border-t border-slate-200 dark:border-slate-800' : 'max-h-0 opacity-0 overflow-hidden'}`}>
                                     <div className="p-4 flex flex-col gap-3">
                                         {personBorrowings.map((b) => (
-                                            <div key={b.id} className={`bg-white dark:bg-slate-950 p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b last:border-0 border-slate-100 dark:border-slate-800 transition-colors ${b.status === 'settled' ? 'opacity-50 bg-slate-50 dark:bg-slate-900' : ''}`}>
+                                            <div key={b.id} style={{ background: b.status === 'settled' ? 'var(--bg-app)' : 'var(--bg-icon)' }} className={`p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b last:border-0 border-slate-100 dark:border-slate-800 transition-colors ${b.status === 'settled' ? 'opacity-50' : ''}`}>
 
                                                 <div className="flex-1">
                                                     <div className="flex items-center gap-2 mb-1">
