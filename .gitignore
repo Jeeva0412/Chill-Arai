@@ -1,4 +1,6 @@
+# =========================
 # Logs
+# =========================
 logs
 *.log
 npm-debug.log*
@@ -7,13 +9,60 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# =========================
+# Dependencies
+# =========================
 node_modules
+.pnp
+.pnp.js
+
+# =========================
+# Build Outputs (Node/Vite)
+# =========================
 dist
 dist-ssr
-*.local
-.env
+build/
+coverage/
 
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+
+# =========================
+# Rust
+# =========================
+target/
+
+# =========================
+# Microcontrollers / C++
+# =========================
+.pio/
+*.elf
+*.bin
+
+# =========================
+# Deployment
+# =========================
+.vercel/
+
+# =========================
+# Security & Environment
+# =========================
+.local
+.env
+.env.*
+*.pem
+*.key
+secrets.json
+
+# =========================
 # Editor directories and files
+# =========================
 .vscode/*
 !.vscode/extensions.json
 .idea
