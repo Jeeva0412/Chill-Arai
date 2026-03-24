@@ -8,67 +8,50 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+# Specific to your root directory
+build_log.txt
 
 # =========================
 # Dependencies
 # =========================
-node_modules
+node_modules/
 .pnp
 .pnp.js
 
 # =========================
-# Build Outputs (Node/Vite)
+# Build Outputs
 # =========================
-dist
-dist-ssr
-build/
-coverage/
-
-# =========================
-# Python
-# =========================
-__pycache__/
-*.py[cod]
-*$py.class
-venv/
-.venv/
-
-# =========================
-# Rust
-# =========================
-target/
-
-# =========================
-# Microcontrollers / C++
-# =========================
-.pio/
-*.elf
-*.bin
-
-# =========================
-# Deployment
-# =========================
-.vercel/
+dist/
+dist-ssr/
+*.local
 
 # =========================
 # Security & Environment
 # =========================
-.local
 .env
 .env.*
+# Keep the example file, but ignore actual keys
+!.env.example
 *.pem
 *.key
-secrets.json
 
 # =========================
-# Editor directories and files
+# Editor & OS Files
 # =========================
 .vscode/*
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# =========================
+# Framework/Tool Specific
+# =========================
+# Vite/TS build info
+*.tsbuildinfo
+# If 'icons' is a generated folder from a manifest/pwa tool:
+# icons/
