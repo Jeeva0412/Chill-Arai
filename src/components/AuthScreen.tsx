@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Wallet, Cloud, Shield, Fingerprint } from 'lucide-react';
-import { signInWithGoogle, isGoogleConfigured } from '../lib/driveSync';
+import { signInWithGoogle } from '../lib/driveSync';
 
 interface AuthScreenProps {
   onSignedIn: (token: string) => void;
@@ -73,7 +73,6 @@ export function AuthScreen({ onSignedIn, onSkip }: AuthScreenProps) {
 
         {/* Actions */}
         <div className="flex flex-col gap-3 w-full">
-          {isGoogleConfigured() && (
             <button
               onClick={handleGoogleSignIn}
               disabled={loading}
@@ -94,7 +93,6 @@ export function AuthScreen({ onSignedIn, onSkip }: AuthScreenProps) {
                 </>
               )}
             </button>
-          )}
           <button
             onClick={onSkip}
             className="w-full py-3.5 rounded-2xl font-semibold text-sm transition-all active:scale-95"

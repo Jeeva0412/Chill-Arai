@@ -1,13 +1,21 @@
 import { useState } from 'react';
-import { Lock } from 'lucide-react';
+import { Lock, Fingerprint } from 'lucide-react';
 import { deriveKey } from '../lib/crypto';
+import { authenticateWithBiometrics } from '../hooks/useAppLock';
 
 interface PinSetupProps {
   onPinSet: (key: CryptoKey) => void;
   mode: 'setup' | 'unlock';
+  onUnlock?: () => void;
 }
 
-export function PinSetup({ onPinSet, mode }: PinSetupProps) {
+const hashPin = async (pin: string) => {
+  const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pin));
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+};
+
+export function PinSetup({ onPinSet, mode, onUnlock }: PinSetupProps) {
   const [pin, setPin] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -25,6 +33,18 @@ export function PinSetup({ onPinSet, mode }: PinSetupProps) {
     setLoading(true);
     setError('');
     try {
+      const hash = await hashPin(finalPin);
+      if (mode === 'setup') {
+        localStorage.setItem('chill_arai_pin_hash', hash);
+      } else {
+        const stored = localStorage.getItem('chill_arai_pin_hash');
+        if (stored && stored !== hash) {
+          setError('Incorrect PIN');
+          setPin('');
+          setLoading(false);
+          return;
+        }
+      }
       const key = await deriveKey(finalPin);
       onPinSet(key);
     } catch {
@@ -85,6 +105,20 @@ export function PinSetup({ onPinSet, mode }: PinSetupProps) {
               </button>
             ))}
           </div>
+        )}
+
+        {mode === 'unlock' && onUnlock && !loading && (
+          <button
+            onClick={async () => {
+              const ok = await authenticateWithBiometrics();
+              if (ok) onUnlock();
+            }}
+            className="mt-6 flex items-center justify-center gap-2 px-6 py-3 rounded-xl transition-all active:scale-95"
+            style={{ background: 'var(--bg-surface)', border: '1px solid var(--glass-border)', color: 'var(--text-primary)' }}
+          >
+            <Fingerprint size={20} />
+            <span className="font-semibold text-sm">Use FaceID / Fingerprint</span>
+          </button>
         )}
 
         {loading && <p style={{ color: 'var(--text-secondary)' }} className="animate-pulse">Securing...</p>}

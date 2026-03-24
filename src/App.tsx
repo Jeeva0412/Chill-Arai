@@ -14,7 +14,7 @@ import { QRScanner } from './components/QRScanner';
 import type { Transaction, Lending, Borrowing } from './types/database.types';
 import { db, migrateFromLocalStorage } from './lib/db';
 import { initGoogleAuth, fetchFromDrive, pushToDrive, mergeRecords, isGoogleConfigured } from './lib/driveSync';
-import { useAppLock, authenticateWithBiometrics } from './hooks/useAppLock';
+import { useAppLock } from './hooks/useAppLock';
 import {
   Wallet, Activity, Download, Users, Plus, Moon, Sun,
   FileText, ScanLine, SplitSquareHorizontal, QrCode, LogOut
@@ -76,12 +76,7 @@ function App() {
     onUnlockRequired: () => setShowLockScreen(true),
   });
 
-  const handleUnlock = async () => {
-    try {
-      const ok = await authenticateWithBiometrics();
-      if (ok) { setShowLockScreen(false); unlock(); }
-    } catch { /* fallback to PIN */ }
-  };
+
 
   // ─── Phase 1: Load data from IndexedDB on mount ───
   useEffect(() => {
@@ -351,16 +346,18 @@ function App() {
   // Phase 3: Lock screen
   if (isLocked && showLockScreen) {
     return (
-      <div onClick={handleUnlock} className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-6 cursor-pointer"
-        style={{ background: 'var(--bg-app)' }}>
-        <div className="w-20 h-20 rounded-3xl flex items-center justify-center" style={{ background: 'var(--bg-header)' }}>
-          <Wallet size={36} className="text-white" />
-        </div>
-        <div className="text-center">
-          <h2 className="text-2xl font-extrabold tracking-tight" style={{ color: 'var(--text-primary)' }}>Chill-Arai</h2>
-          <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>Tap to unlock with biometrics</p>
-        </div>
-      </div>
+      <PinSetup 
+        mode="unlock" 
+        onPinSet={(key) => {
+          setEncKey(key);
+          setShowLockScreen(false);
+          unlock();
+        }}
+        onUnlock={() => {
+          setShowLockScreen(false);
+          unlock();
+        }}
+      />
     );
   }
 
@@ -372,7 +369,7 @@ function App() {
   ] as const;
 
   return (
-    <div className="flex flex-col md:flex-row h-full min-h-screen w-full transition-colors duration-300"
+    <div className="flex flex-col md:flex-row h-full min-h-[100dvh] w-full transition-colors duration-300"
       style={{ background: 'var(--bg-app)', color: 'var(--text-primary)' }}>
 
       {/* ─── Sidebar (Desktop) ─── */}
@@ -446,7 +443,7 @@ function App() {
       </nav>
 
       {/* ─── Main Content ─── */}
-      <main className="flex-1 md:ml-20 flex flex-col min-h-screen">
+      <main className="flex-1 md:ml-20 flex flex-col min-h-[100dvh]">
 
         {/* Global Header */}
         <header className="sticky top-0 z-40 px-4 md:px-8 pt-safe"
