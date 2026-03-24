@@ -7,9 +7,12 @@ interface DashboardProps {
     lendings: Lending[];
     borrowings: Borrowing[];
     onNavigate: (tab: 'dashboard' | 'transactions' | 'lending' | 'borrowing') => void;
+    googleToken?: string | null;
+    onGoogleSignIn?: () => void;
+    isSigningIn?: boolean;
 }
 
-export function Dashboard({ transactions, lendings, borrowings, onNavigate }: DashboardProps) {
+export function Dashboard({ transactions, lendings, borrowings, onNavigate, googleToken, onGoogleSignIn, isSigningIn }: DashboardProps) {
     const totalIncome = transactions
         .filter((t) => t.type === 'income')
         .reduce((sum, t) => sum + t.amount, 0);
@@ -61,6 +64,21 @@ export function Dashboard({ transactions, lendings, borrowings, onNavigate }: Da
     };
     return (
         <div className="flex-col gap-6 animate-fade-in w-full">
+            {!googleToken && onGoogleSignIn && (
+                <div className="mb-6 p-5 rounded-2xl flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between shadow-sm" style={{ background: 'var(--bg-icon)' }}>
+                    <div>
+                        <h3 className="font-bold text-base" style={{ color: 'var(--text-primary)' }}>Backup to Google Drive</h3>
+                        <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>Keep your data safe, encrypted, and synced across all your devices.</p>
+                    </div>
+                    <button 
+                        onClick={onGoogleSignIn} 
+                        disabled={isSigningIn}
+                        className="px-5 py-2.5 font-bold text-sm rounded-xl transition-all active:scale-95 shrink-0 w-full sm:w-auto text-center"
+                        style={{ background: 'var(--text-primary)', color: 'var(--bg-app)' }}>
+                        {isSigningIn ? 'Connecting...' : 'Connect Google'}
+                    </button>
+                </div>
+            )}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem' }}>
 
                 {/* Revenue/Income Card */}

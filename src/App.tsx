@@ -13,7 +13,7 @@ import { QRShare } from './components/QRShare';
 import { QRScanner } from './components/QRScanner';
 import type { Transaction, Lending, Borrowing } from './types/database.types';
 import { db, migrateFromLocalStorage } from './lib/db';
-import { initGoogleAuth, fetchFromDrive, pushToDrive, mergeRecords, isGoogleConfigured } from './lib/driveSync';
+import { initGoogleAuth, fetchFromDrive, pushToDrive, mergeRecords, signInWithGoogle } from './lib/driveSync';
 import { useAppLock } from './hooks/useAppLock';
 import {
   Wallet, Activity, Download, Users, Plus, Moon, Sun,
@@ -45,7 +45,7 @@ function App() {
 
   // ─── Phase 2 & 3: Auth/Security state ───
   const [firstRun] = useState(() => !localStorage.getItem('chill_arai_onboarded'));
-  const [showAuth, setShowAuth] = useState(firstRun && isGoogleConfigured());
+  const [showAuth, setShowAuth] = useState(firstRun);
   const [googleToken, setGoogleToken] = useState<string | null>(
     () => sessionStorage.getItem('google_access_token')
   );
@@ -58,6 +58,7 @@ function App() {
   const [lendings, setLendings] = useState<Lending[]>([]);
   const [borrowings, setBorrowings] = useState<Borrowing[]>([]);
   const [dataLoaded, setDataLoaded] = useState(false);
+  const [isSigningIn, setIsSigningIn] = useState(false);
 
   // ─── Modal state ───
   const [showTxForm, setShowTxForm] = useState(false);
@@ -92,6 +93,11 @@ function App() {
       setBorrowings(bs as Borrowing[]);
       setDataLoaded(true);
     })();
+  }, []);
+
+  // ─── Phase 2: Init Google Auth globally for dashboard ───
+  useEffect(() => {
+    initGoogleAuth();
   }, []);
 
   // ─── Phase 2: Google Drive Sync on connect/online ───
@@ -151,6 +157,22 @@ function App() {
     if (action === 'add-expense') { setActiveTab('transactions'); setShowTxForm(true); }
     if (action === 'split-bill') setShowSplit(true);
   }, []);
+
+  const handleGoogleSignInDashboard = async () => {
+    try {
+      setIsSigningIn(true);
+      const token = await signInWithGoogle();
+      setGoogleToken(token);
+      sessionStorage.setItem('google_access_token', token);
+      if (!encKey) {
+        setShowPin(true);
+      }
+    } catch (e) {
+      console.error('Google sign in failed', e);
+    } finally {
+      setIsSigningIn(false);
+    }
+  };
 
   // ─────── CRUD Handlers ───────
 
@@ -511,7 +533,15 @@ function App() {
         {/* Page Content */}
         <div className="flex-1 p-4 md:p-8 pb-safe">
           {activeTab === 'dashboard' && (
-            <Dashboard transactions={transactions} lendings={lendings} borrowings={borrowings} onNavigate={setActiveTab} />
+            <Dashboard 
+              transactions={transactions} 
+              lendings={lendings} 
+              borrowings={borrowings} 
+              onNavigate={setActiveTab}
+              googleToken={googleToken}
+              onGoogleSignIn={handleGoogleSignInDashboard}
+              isSigningIn={isSigningIn}
+            />
           )}
           {activeTab === 'transactions' && (
             <TransactionManager transactions={transactions} onDelete={handleDeleteTransaction} />
